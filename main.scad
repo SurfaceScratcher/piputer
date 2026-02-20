@@ -11,5 +11,6 @@ translate([0,0,10])
 top();
 display_mounts();
 
-translate([0,0,50])
+translate([30,100,50])
+rotate([145,0,0])
 lcd();

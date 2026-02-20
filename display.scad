@@ -60,9 +60,19 @@ translate([2.5,2.5,2])
 display();
 // Platine rendern
 platine();
+translate([170 + 1.5 - 11,4.35,-6.4])
+hdmi();
+difference(){
+cube([180,124,10]);
+translate([7.25,7.25,-3])
+cube([165.5, 109.5,80]);
+
+}
 }
 
 lcd();
 
-translate([170 + 1.5 - 11,4.35,-6.4])
-hdmi();
+
+
+
+
