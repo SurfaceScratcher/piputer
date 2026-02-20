@@ -1,16 +1,17 @@
 
 module display(){
-cube([165,109,5.5]);}
+color("black"){
+cube([165,109,5.5]);}}
 
 module hdmi(){
+color("grey"){
   cube([11,15,4.65]);
 translate([0,2,4.65])
     cube([11,11,2]);
-
+}
 }
 
 module lash(){
-    color("green"){
         difference(){
             // UNION: Kombiniere Würfel + Zylinder zur Lasche
             union(){
@@ -22,10 +23,12 @@ module lash(){
             translate([4,0,0])
             cylinder(h=4,d=3.5,center=true);
         }
-    }
+    
 }
 
 module platine(){
+
+    color("green"){
     // Hauptplatine
     cube([170,114,1.5]);
     
@@ -49,6 +52,7 @@ module platine(){
     rotate([0, 0, 180])
     translate([0, -4.5, 0])
     lash();
+    }
 }
 
 module lcd() {
