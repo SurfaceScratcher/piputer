@@ -1,15 +1,8 @@
 echo("USING PI MOUNT FILE");
 use <./mounts.scad>;
-pi_mountDistX    = 58;
-pi_mountDistY    = 48;
-pi_mountHeight   = 5;
-pi_mountD        = 4;
 
-module pi_mounts(
-    distX = pi_mountDistX,
-    distY = pi_mountDistY,
-    h     = pi_mountHeight,
-    d     = pi_mountD
-) {
-    mount4_holes(distX, distY, d, h, 0);
+module pi_mounts(distX=58, distY=49, standoffH=7, standoffD=8,
+                 insertD=4.5, insertDepth=6, z0=0)
+{
+    mount4_standoffs(distX, distY, standoffD, standoffH, insertD, insertDepth, z0);
 }

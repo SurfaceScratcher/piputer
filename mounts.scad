@@ -19,3 +19,18 @@ module mount4_holes(distX, distY, holeD, depth, z0=0) {
     translate([0,      distY,  z0 - eps]) cylinder(h, d = holeD, center = false);
     translate([distX,  distY,  z0 - eps]) cylinder(h, d = holeD, center = false);
 }
+
+// Solid standoffs with blind M3 heat-insert hole bored from top
+module mount4_standoffs(distX, distY, standoffD, standoffH, insertD, insertDepth, z0=0) {
+    for (px = [0, distX]) {
+        for (py = [0, distY]) {
+            translate([px, py, z0]) {
+                difference() {
+                    cylinder(h=standoffH, d=standoffD, center=false);
+                    translate([0, 0, standoffH - insertDepth])
+                        cylinder(h=insertDepth + eps, d=insertD, center=false);
+                }
+            }
+        }
+    }
+}
