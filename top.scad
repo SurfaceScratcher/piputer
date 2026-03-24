@@ -23,7 +23,7 @@ use <./hinge.scad>;
 eps = 0.01;
 
 module top(
-    W=226, D=130, H=15, wall=2,
+    W=226, D=140, H=15, wall=2,
     back_t  = 5,    // boss height / back-plate thickness
     bezel_t = 3,    // display bezel thickness
 
@@ -55,9 +55,9 @@ module top(
             }
 
             // Ear flanges: front / left / right
-            translate([W/2 - earSz/2,    -earSz,              0]) cube([earSz, earSz, H]); // front
-            translate([-earSz,            ear_lr_y-earSz/2,   0]) cube([earSz, earSz, H]); // left
-            translate([W,                 ear_lr_y-earSz/2,   0]) cube([earSz, earSz, H]); // right
+           // translate([W/2 - earSz/2,    -earSz,              0]) cube([earSz, earSz, H]); // front
+          //  translate([-earSz,            ear_lr_y-earSz/2,   0]) cube([earSz, earSz, H]); // left
+           // translate([W,                 ear_lr_y-earSz/2,   0]) cube([earSz, earSz, H]); // right
 
             // Corner bosses (Ø8 × 5 mm) at back-plate corners
             for (pos = [[6,6],[220,6],[6,124],[220,124]])
@@ -80,9 +80,6 @@ module top(
                 cylinder(h=ins_depth + eps, d=ins_d, $fn=16);
     }
 
-    // Integral barrel hinge knuckles (2 of 5) at lid back edge
-    // Barrel at top.scad (Y=D=130, Z=0) → world (Y=130, Z=35) when closed
-    hinge_top(z_axis=0, wall_y=D-wall, bar_y=D);
 }
 
 top();

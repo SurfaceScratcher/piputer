@@ -27,17 +27,17 @@
 // ============================================================
 
 dicke             = 1;
-breite            = 10;
-laenge_a          = 60;
-laenge_aq         = 19;
+breite            = 7.4;
+laenge_a          = 29.6;
+laenge_aq         = 22;
 breite_dazwischen = 4;
 winkel            = 70;
 $fn               = 40;
 
-abstand           = 37.08;
+abstand           = 13;
 
 // -- Löcher --
-loch_d            = 1.5;   // Lochdurchmesser
+loch_d            = 2.5;   // Lochdurchmesser
 loch_rand         = 3;     // Abstand Rand → erstes/letztes Loch
 loch_abstand      = 4;     // Abstand zwischen den Löchern
 anzahl_unten      = 5;     // Löcher Bodenplatte
@@ -148,10 +148,40 @@ module bottom_mount() {
 // Full assembled hinge (base + lid piece, closed position).
 // Mirrors X for the right-side instance: mirror([1,0,0]) eeepc_hinge_asm().
 module eeepc_hinge_asm() {
-    bottom_mount();
-    translate([offset_x, offset_y, offset_z])
-        rotate([0, 180, 0])
-            flange2();
+    color([0.15, 0.15, 0.15]) {
+        bottom_mount();
+        translate([offset_x, offset_y, offset_z])
+            rotate([0, 180, 0])
+                flange2();
+    }
+}
+
+// Positioned hinge for the Piputer assembly.
+// Both halves treated as one rigid unit rotating with the lid.
+// Spring deformation is not modelled — the base plate lifts slightly
+// when open, which is physically acceptable for a spring-strip hinge.
+//
+// open_angle : 0 = closed, 120 = typical open
+// side       : "left" or "right"
+// x_pos      : X coordinate of hinge in world coords
+// bar_y      : barrel axis Y (world) — D_front = 130
+// bar_z      : barrel axis Z (world) — H_rear  =  35
+module eeepc_hinge_piputer(open_angle=0, side="left", x_pos=60,
+                            bar_y=130, bar_z=35) {
+    flip  = (side == "right") ? [1, 0, 0] : [0, 0, 0];
+    x_off = (side == "right") ? -offset_x : offset_x;
+
+    color([0.15, 0.15, 0.15])
+    translate([0, bar_y, bar_z])
+    rotate([-open_angle, 0, 0])
+    translate([0, -bar_y, -bar_z]) {
+        // Base half
+        translate([x_pos, bar_y, 0])
+            mirror(flip) bottom_mount();
+        // Lid half
+        translate([x_pos + x_off, bar_y + offset_y, offset_z])
+            mirror(flip) mirror([1, 0, 0]) flange2();
+    }
 }
 
 

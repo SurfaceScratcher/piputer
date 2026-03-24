@@ -12,7 +12,7 @@
 use <./piMount.scad>;
 use <./usvMount.scad>;
 use <./kbMount.scad>;
-use <./hinge.scad>;
+
 
 eps = 0.01;
 
@@ -34,7 +34,7 @@ module bottom(
     standoffD   = 8;
     insertD     = 3.5;   // M2.5
     insertDepth = 5;
-    earSz       = 12;
+    
 
     difference() {
         union() {
@@ -43,12 +43,7 @@ module bottom(
             // Rear block (electronics zone)
             translate([0, D_front, 0])
                 cube([W, D_rear, H_rear]);
-
-            // Ear flanges — front / left / right (at H_front face, for lid closure)
-            translate([W/2 - earSz/2,     -earSz,              0]) cube([earSz, earSz, H_front]); // front
-            translate([-earSz,             D_front/2 - earSz/2, 0]) cube([earSz, earSz, H_front]); // left
-            translate([W,                  D_front/2 - earSz/2, 0]) cube([earSz, earSz, H_front]); // right
-        }
+}
 
         // ── Hollow interior ──────────────────────────────────────────────────
 
@@ -91,12 +86,23 @@ module bottom(
     translate([usv_ox + 3, usv_oy + 3, floor_t])
         usv_mounts(z0=0, insertD=3.5, insertDepth=5);
 
-    // MC-8017 keyboard: corner holes 4mm from board edge, spacing 212×110mm
-    translate([kb_ox + 4, kb_oy + 4, floor_t])
-        kb_mounts(z0=0);
 
-    // Integral barrel hinge at step-wall top-outer corner (Y=130, Z=H_rear=35)
-    hinge_bottom(z_axis=H_rear, wall_y=D_front - wall, bar_y=D_front);
+
+// splitter and hinge mounts
+translate([20,70,2]){
+color("red"){
+cube([10,50,20]);
+}}
+translate([190,70,2]){
+color("red"){
+cube([10,50,20]);
+}}
+translate([2,110,2]){
+color("red"){
+cube([220,10,20]);
+}}
+
 }
+
 
 bottom();
