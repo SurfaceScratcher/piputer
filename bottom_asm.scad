@@ -11,7 +11,7 @@ use <./usv.scad>;
 use <./hinge_eeepc.scad>;
 
 module bottom_asm(
-    open_angle = -70,
+    open_angle = 120,
     H_front    = 20,
     H_rear     = 35,
     D_front    = 130,
@@ -39,10 +39,13 @@ module bottom_asm(
     rotate([0, 0, 90])
         usv(batteries=true);
 
-    // ── EeePC friction hinge pair ────────────────────────────────────────────
-    translate([189,100,22])
-    eeepc_hinge_asm();
-    eeepc_hinge_asm();
+    // ── EeePC friction hinge pair ──────────────────────────────────────────
+    translate([-41,-30,-8])
+eeepc_hinge_split(open_angle=open_angle, side="left",  x_pos=60,
+                      bar_y=D_front, bar_z=H_rear);
+translate([41,-30,-8])
+    eeepc_hinge_split(open_angle=open_angle, side="right", x_pos=166,
+                      bar_y=D_front, bar_z=H_rear);
 }
 
 bottom_asm();

@@ -59,6 +59,13 @@ offset_x = 4 * dicke;
 offset_y = breite/2 * (sin(winkel) - 1) + laenge_b * cos(winkel);
 offset_z = laenge_b * (1 + sin(winkel)) - breite/2 * cos(winkel);
 
+// True barrel-axis offset from the bottom_mount() placement origin.
+// Derived by tracing the side_b() pin (breite/2, laenge_b, 2*dicke)
+// through rotate([0,0,winkel]) then rotate([0,90,0]) in flange():
+//   Ry90( Rz(winkel)·pin ) → (2·dicke,  sin·b/2+cos·lb,  sin·lb−cos·b/2)
+barrel_y_off = sin(winkel) * breite/2 + cos(winkel) * laenge_b;
+barrel_z_off = sin(winkel) * laenge_b - cos(winkel) * breite/2;
+
 // Gesamtlänge die die Lochreihe belegt – zur Validierung
 belegte_laenge_unten = 2 * loch_rand + (anzahl_unten - 1) * loch_abstand;
 belegte_laenge_oben  = 2 * loch_rand + (anzahl_oben  - 1) * loch_abstand;
@@ -181,6 +188,49 @@ module eeepc_hinge_piputer(open_angle=0, side="left", x_pos=60,
         // Lid half
         translate([x_pos + x_off, bar_y + offset_y, offset_z])
             mirror(flip) mirror([1, 0, 0]) flange2();
+    }
+}
+
+
+// Split-piece articulated hinge for the Piputer assembly.
+// bottom_mount() stays fixed; only flange2() rotates — physically correct
+// clamshell kinematics.
+//
+// The barrel pin is geometrically offset from the bottom_mount() origin by
+// (2·dicke, barrel_y_off, barrel_z_off).  The mount plate is raised to
+// Z = bar_z − barrel_z_off so the pin lands exactly at world Z = bar_z.
+// The rotation pivot is (*, bar_y + barrel_y_off, bar_z).
+//
+// open_angle : 0 = closed, positive = lid opening upward
+// side       : "left" or "right"
+// x_pos      : X coordinate of hinge mount in world coords
+// bar_y      : Y of the bottom_mount() base — D_front = 130
+// bar_z      : target world Z of the barrel axis  — H_rear  =  35
+module eeepc_hinge_split(open_angle=0, side="left", x_pos=60,
+                          bar_y=130, bar_z=35) {
+    x_off   = (side == "right") ? -offset_x : offset_x;
+    mount_z = bar_z - barrel_z_off;   // base plate Z so barrel pin sits at bar_z
+    pivot_y = bar_y + barrel_y_off;   // world Y of barrel axis
+
+    color([0.15, 0.15, 0.15]) {
+        // Base half — fixed; barrel pin lands at (x_pos+2·dicke, pivot_y, bar_z)
+        translate([x_pos, bar_y, mount_z]) {
+            if (side == "right")
+                mirror([1, 0, 0]) bottom_mount();
+            else
+                bottom_mount();
+        }
+
+        // Lid half — pivots around (*, pivot_y, bar_z)
+        translate([0, pivot_y, bar_z])
+        rotate([-open_angle, 0, 0])
+        translate([0, -pivot_y, -bar_z])
+        translate([x_pos + x_off, bar_y + offset_y, mount_z + offset_z]) {
+            if (side == "right")
+                mirror([1, 0, 0]) rotate([0, 180, 0]) flange2();
+            else
+                rotate([0, 180, 0]) flange2();
+        }
     }
 }
 
