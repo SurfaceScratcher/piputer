@@ -25,7 +25,7 @@ bottom_asm(open_angle=open_angle);
 //   → after rotate unchanged → after translate([0,130,35]): Y=0, Z=20 ✓ (sits on front zone)
 //   Back edge (Y=130, Z=0) → mirror Z=0 → translate Y=0 → rotate unchanged → translate: Y=130, Z=35 ✓
 
-translate([0, D_front-14, H_rear])
+translate([0, D_front, H_rear])
 rotate([-open_angle, 0, 0])
 translate([0, -D_front, 0])
 mirror([0, 0, 1])

@@ -39,12 +39,13 @@ module bottom_asm(
     rotate([0, 0, 90])
         usv(batteries=true);
 
-    // ── EeePC friction hinge pair ──────────────────────────────────────────
-    translate([-41,-30,-8])
-eeepc_hinge_split(open_angle=open_angle, side="left",  x_pos=60,
+    // ── EeePC friction hinge pair (base halves only) ────────────────────────
+    // Lid halves are in display_asm.scad — they rotate with the lid.
+    // bar_y/bar_z = barrel world position; mount plate auto-positioned at
+    // Z = bar_z − barrel_z_off (rests on keyboard cover).
+    eeepc_hinge_split(side="left",  x_pos=60,
                       bar_y=D_front, bar_z=H_rear);
-translate([41,-30,-8])
-    eeepc_hinge_split(open_angle=open_angle, side="right", x_pos=166,
+    eeepc_hinge_split(side="right", x_pos=166,
                       bar_y=D_front, bar_z=H_rear);
 }
 

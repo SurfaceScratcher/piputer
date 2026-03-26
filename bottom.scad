@@ -67,13 +67,6 @@ module bottom(
         translate([W - wall - eps, rpi_oy, 10 - eps])
             cube([wall + 2*eps, 56, 1.6 + 2*eps]);
 
-        // ── Ear heat-insert holes ─────────────────────────────────────────────
-        translate([W/2,          -(earSz/2),              H_front - insertDepth])
-            cylinder(h=insertDepth + eps, d=insertD);
-        translate([-(earSz/2),   D_front/2,               H_front - insertDepth])
-            cylinder(h=insertDepth + eps, d=insertD);
-        translate([W+(earSz/2),  D_front/2,               H_front - insertDepth])
-            cylinder(h=insertDepth + eps, d=insertD);
     }
 
     // ── PCB standoffs ──────────────────────────────────────────────────────────
@@ -88,19 +81,35 @@ module bottom(
 
 
 
-// splitter and hinge mounts
-translate([20,70,2]){
-color("red"){
-cube([10,50,20]);
-}}
-translate([190,70,2]){
-color("red"){
-cube([10,50,20]);
-}}
-translate([2,110,2]){
-color("red"){
-cube([220,10,20]);
-}}
+    // ── Hinge support bars ──────────────────────────────────────────────────
+    // Solid pillars from floor to H_front under each hinge mount plate.
+    // Blind M2.5 heat-insert holes (Ø3.5 × 5 mm) match loecher_reihe() in
+    // hinge_eeepc.scad (loch_rand=3, loch_abstand=4, anzahl_unten=5).
+    //
+    // Barrel offsets (hinge_rise=12, winkel=70, breite=7.4):
+    //   barrel_y_off ≈ 8.31 → mount_y = D_front − 8.31 ≈ 121.69
+    //   Mount plate Y span: 92.09 .. 121.69 (laenge_a=29.6)
+    hinge_w       = 7.4;    // breite
+    hinge_plate_l = 29.6;   // laenge_a
+    hinge_mount_y = D_front - 8.31;               // mount plate Y origin
+    hinge_bar_y   = hinge_mount_y - hinge_plate_l; // ≈ 92.09
+    hinge_bar_h   = H_front - floor_t;             // 17 mm
+
+    hinge_holes   = 5;
+    hinge_lr      = 3;      // loch_rand
+    hinge_pitch   = 4;      // loch_abstand
+
+    for (hx = [60, 166 - hinge_w]) {
+        difference() {
+            translate([hx, hinge_bar_y, floor_t])
+                cube([hinge_w, hinge_plate_l, hinge_bar_h]);
+            for (i = [0 : hinge_holes - 1])
+                translate([hx + hinge_w/2,
+                           hinge_bar_y + hinge_lr + i * hinge_pitch,
+                           H_front - insertDepth])
+                    cylinder(h = insertDepth + eps, d = insertD, $fn=16);
+        }
+    }
 
 }
 
