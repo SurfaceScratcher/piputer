@@ -40,6 +40,14 @@ module top_cover(
         // HDMI cable-exit slot (12×16 mm, lcd HDMI block at Y=6.35)
         translate([183.5, 6.35, -eps])
             cube([12, 16, back_t + 2*eps]);
+
+        // ── I4 fix: Barrel clearance notches at back edge ───────────────
+        // Semicircular notches (Ø9 > barrel Ø7.4) at Y=130 for each hinge.
+        // Only the half at Y<130 cuts into the cover.
+        translate([62, 130, -eps])
+            cylinder(h = back_t + 2*eps, d = 9, $fn=24);
+        translate([164, 130, -eps])
+            cylinder(h = back_t + 2*eps, d = 9, $fn=24);
     }
 }
 

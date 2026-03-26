@@ -23,8 +23,8 @@ module kb_cover(
 
     // Hinge screw positions (must match hinge_eeepc.scad & bottom.scad)
     hinge_w     = 7.4;    // breite
-    hinge_mount_y = D - 8.31;                     // ≈ 121.69
-    hinge_bar_y   = hinge_mount_y - 29.6;         // ≈ 92.09
+    hinge_mount_y = D - 9.40;                     // ≈ 120.60 (barrel_y_off with hinge_rise=15)
+    hinge_bar_y   = hinge_mount_y - 29.6;         // ≈ 91.00
     hinge_lr      = 3;
     hinge_pitch   = 4;
     hinge_holes   = 5;
@@ -42,6 +42,11 @@ module kb_cover(
             for (i = [0 : hinge_holes - 1])
                 translate([hx, hinge_bar_y + hinge_lr + i * hinge_pitch, -eps])
                     cylinder(h = t + 2*eps, d = clr_d, $fn=16);
+
+        // side_a knuckle cylinder clearance (Ø8 at far end of each mount plate)
+        for (hx = [60 + hinge_w/2, 166 - hinge_w/2])
+            translate([hx, hinge_bar_y, -eps])
+                cylinder(h = t + 2*eps, d = 8, $fn=24);
     }
 }
 

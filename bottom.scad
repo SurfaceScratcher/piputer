@@ -3,9 +3,9 @@
 // Profile (side view, Y axis):
 //   Front zone  Y=0..130,  H_front=20  — keyboard area (open top, closed by kb_cover)
 //   Rear zone   Y=130..200, H_rear=35  — electronics area (open top, closed by lid when open)
-//   Constraint: H_front(20) + H_lid(15) = H_rear(35) → flat top when closed
+//   Lid sits on kb_cover: bezel at Z=H_front+kb_t=23, back at Z=38 (3mm hinge gap)
 //
-// Hinge axis: Y=130, Z=35 (barrel at step-wall top-outer corner)
+// Hinge barrel: Y=130, Z=38 (3mm above rear zone top)
 //
 // RPi/NVMe standoffs: OD=8mm, H=7mm, blind M2.5 heat-insert hole Ø3.5mm × 5mm from top
 
@@ -67,6 +67,13 @@ module bottom(
         translate([W - wall - eps, rpi_oy, 10 - eps])
             cube([wall + 2*eps, 56, 1.6 + 2*eps]);
 
+        // ── Hinge bow clearance notches in step wall ────────────────────────
+        // The bow arc outer edge intrudes ~1mm into the step wall inner face.
+        // Cut a small relief at each hinge position.
+        translate([59, D_front - wall - 1, 15])
+            cube([10, wall + 1 + eps, 6]);
+        translate([157, D_front - wall - 1, 15])
+            cube([10, wall + 1 + eps, 6]);
     }
 
     // ── PCB standoffs ──────────────────────────────────────────────────────────
@@ -86,12 +93,12 @@ module bottom(
     // Blind M2.5 heat-insert holes (Ø3.5 × 5 mm) match loecher_reihe() in
     // hinge_eeepc.scad (loch_rand=3, loch_abstand=4, anzahl_unten=5).
     //
-    // Barrel offsets (hinge_rise=12, winkel=70, breite=7.4):
-    //   barrel_y_off ≈ 8.31 → mount_y = D_front − 8.31 ≈ 121.69
-    //   Mount plate Y span: 92.09 .. 121.69 (laenge_a=29.6)
+    // Barrel offsets (hinge_rise=15, winkel=70, breite=7.4):
+    //   barrel_y_off ≈ 9.40 → mount_y = D_front − 9.40 ≈ 120.60
+    //   Mount plate Y span: 91.00 .. 120.60 (laenge_a=29.6)
     hinge_w       = 7.4;    // breite
     hinge_plate_l = 29.6;   // laenge_a
-    hinge_mount_y = D_front - 8.31;               // mount plate Y origin
+    hinge_mount_y = D_front - 9.40;               // mount plate Y origin
     hinge_bar_y   = hinge_mount_y - hinge_plate_l; // ≈ 92.09
     hinge_bar_h   = H_front - floor_t;             // 17 mm
 

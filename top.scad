@@ -16,7 +16,7 @@
 //   Z 12..15 : front bezel (3 mm solid — active-area window cut through)
 //
 // Back face (Z=0) is fully open — closed by top_cover.scad.
-// Hinge: integral barrel knuckles (2 of 5) at back edge Y=D=130, Z=0 → world (Y=130, Z=35) when closed.
+// Hinge: barrel axis at back edge Y=D_front=130, Z=0 → world (Y=130, Z=38) when closed.
 
 eps = 0.01;
 
@@ -61,6 +61,15 @@ module top(
         for (pos = [[6,6],[220,6],[6,124],[220,124]])
             translate([pos[0], pos[1], -eps])
                 cylinder(h=ins_depth + eps, d=ins_d, $fn=16);
+
+        // ── I2 fix: Hinge-zone wall relief ──────────────────────────────
+        // Remove rear 12 mm of left/right side walls (Z=0..int_z1) so
+        // the lid nests inside the bottom shell at Y=130..140.
+        translate([-eps, D - wall - 10, -eps])
+            cube([wall + 2*eps, 10 + wall + eps, int_z1 + eps]);
+        translate([W - wall - eps, D - wall - 10, -eps])
+            cube([wall + 2*eps, 10 + wall + eps, int_z1 + eps]);
+
     }
 
 }

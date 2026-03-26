@@ -15,6 +15,7 @@ module bottom_asm(
     H_front    = 20,
     H_rear     = 35,
     D_front    = 130,
+    barrel_z   = 38,      // hinge barrel Z (H_front + kb_t + H_lid = 20+3+15)
     pcb_z_nvme = 10,      // NVMe Base Z : floor_t(3) + standoffH(7)
     pcb_z_rpi  = 18.6     // RPi 5 Z     : pcb_z_nvme(10) + nvme_pcb(1.6) + M2.5_spacer(7)
 ) {
@@ -44,9 +45,9 @@ module bottom_asm(
     // bar_y/bar_z = barrel world position; mount plate auto-positioned at
     // Z = bar_z − barrel_z_off (rests on keyboard cover).
     eeepc_hinge_split(side="left",  x_pos=60,
-                      bar_y=D_front, bar_z=H_rear);
+                      bar_y=D_front, bar_z=barrel_z);
     eeepc_hinge_split(side="right", x_pos=166,
-                      bar_y=D_front, bar_z=H_rear);
+                      bar_y=D_front, bar_z=barrel_z);
 }
 
 bottom_asm();

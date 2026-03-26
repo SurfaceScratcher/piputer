@@ -1,9 +1,9 @@
 // Piputer — parametric spring-strip clamshell hinge
 //
 // Two-piece spring hinge for the Piputer step-wall barrel position:
-//   Barrel world position: Y=D_front(130), Z=H_rear(35)
-//   Mount plate rests on keyboard cover at Z=H_front(20)
-//   Arm bridges hinge_rise = H_rear − H_front = 15 mm
+//   Barrel world position: Y=D_front(130), Z=barrel_z(38)
+//   Mount plate rests on keyboard cover at Z=H_front+kb_t(23)
+//   Arm bridges hinge_rise = barrel_z − (H_front+kb_t) = 38−23 = 15 mm
 //
 // bottom_mount() — base half: flat plate + arc + arm
 //   Mount plate lies at Z=0 in local coords, extends in −Y from origin.
@@ -15,7 +15,7 @@
 //   //       (top.scad Z<0) — external mounting strategy TBD.
 //
 // eeepc_hinge_split() — assembly module for Piputer:
-//   bar_y, bar_z = barrel world position (Y=130, Z=35)
+//   bar_y, bar_z = barrel world position (Y=130, Z=38)
 //   Mount plate auto-positioned at (bar_y − barrel_y_off, bar_z − barrel_z_off)
 
 // ============================================================
@@ -31,9 +31,10 @@ winkel            = 70;
 $fn               = 40;
 
 // Height the barrel must sit above the mount plate.
-// = H_rear(35) − H_front(20) − kb_cover_t(3) = 12
+// = barrel_z(38) − (H_front(20) + kb_cover_t(3)) = 15
 // Mount plate rests on top of the keyboard cover at Z = H_front + 3 = 23.
-hinge_rise        = 12;
+// Barrel sits at Z = 23 + 15 = 38 (3 mm above H_rear → hinge gap).
+hinge_rise        = 15;
 
 // -- Löcher --
 loch_d            = 2.5;   // Lochdurchmesser
@@ -51,6 +52,10 @@ anzahl_oben       = 4;     // Löcher side_aq
 // above the mount plate:  barrel_z_off = sin(w)·lb − cos(w)·b/2 = hinge_rise
 laenge_b = (hinge_rise + cos(winkel) * breite/2) / sin(winkel);
 
+// Shorter arm for lid side — must fit inside lid interior (H=15, bezel_t=3 → 12 mm)
+// Mount plate at Z=laenge_bq_arm−dicke..laenge_bq_arm → just inside bezel surface.
+laenge_bq_arm = 13;
+
 zapfen_d_gross = breite;
 zapfen_d_klein = breite / 2;
 zapfen_h_voll  = 4 * dicke;
@@ -65,7 +70,7 @@ offset_z = laenge_b * (1 + sin(winkel)) - breite/2 * cos(winkel);
 // through rotate([0,0,winkel]) then rotate([0,90,0]) in flange().
 barrel_y_off = sin(winkel) * breite/2 + cos(winkel) * laenge_b;
 barrel_z_off = sin(winkel) * laenge_b - cos(winkel) * breite/2;
-// With hinge_rise=12: barrel_z_off = 12, barrel_y_off ≈ 8.3
+// With hinge_rise=15: barrel_z_off = 15, barrel_y_off ≈ 9.4
 
 // Gesamtlänge die die Lochreihe belegt – zur Validierung
 belegte_laenge_unten = 2 * loch_rand + (anzahl_unten - 1) * loch_abstand;
@@ -113,10 +118,10 @@ module side_aq() {
 }
 
 module side_bq() {
-    cube([breite, laenge_b, dicke]);
-    translate([breite/2, laenge_b, dicke/2])
+    cube([breite, laenge_bq_arm, dicke]);
+    translate([breite/2, laenge_bq_arm, dicke/2])
         cylinder(h=dicke, d=zapfen_d_gross, center=true);
-    translate([breite/2, laenge_b, 2*dicke])
+    translate([breite/2, laenge_bq_arm, 2*dicke])
         cylinder(h=zapfen_h_halb, d=zapfen_d_klein, center=true);
 }
 
@@ -150,7 +155,7 @@ module flange2() {
 // Interleaves with bottom_mount +X pin.
 // Caller translates to barrel position; mirror([1,0,0]) for right side.
 module eeepc_hinge_lid_half() {
-    translate([2*dicke, -breite/2, laenge_b])
+    translate([2*dicke, -breite/2, laenge_bq_arm])
         rotate([0, 180, 0])
             flange2();
 }
@@ -170,9 +175,9 @@ module bottom_mount() {
 module eeepc_hinge_asm() {
     color([0.15, 0.15, 0.15]) {
         bottom_mount();
-        translate([offset_x, offset_y, offset_z])
-            rotate([0, 180, 0])
-                flange2();
+        // Position lid half at barrel axis (derived from base arm geometry)
+        translate([0, barrel_y_off, barrel_z_off])
+            eeepc_hinge_lid_half();
     }
 }
 
@@ -183,10 +188,9 @@ module eeepc_hinge_asm() {
 // side       : "left" or "right"
 // x_pos      : X coordinate of hinge in world coords
 // bar_y      : barrel axis Y (world) — D_front = 130
-// bar_z      : barrel axis Z (world) — H_rear  =  35
+// bar_z      : barrel axis Z (world) — barrel_z = 38
 module eeepc_hinge_piputer(open_angle=0, side="left", x_pos=60,
-                            bar_y=130, bar_z=35) {
-    x_off   = (side == "right") ? -offset_x : offset_x;
+                            bar_y=130, bar_z=38) {
     mount_y = bar_y - barrel_y_off;
     mount_z = bar_z - barrel_z_off;
 
@@ -201,12 +205,12 @@ module eeepc_hinge_piputer(open_angle=0, side="left", x_pos=60,
             else
                 bottom_mount();
         }
-        // Lid half
-        translate([x_pos + x_off, mount_y + offset_y, mount_z + offset_z]) {
+        // Lid half — barrel at (x_pos ± 2*dicke, bar_y, bar_z)
+        translate([x_pos, bar_y, bar_z]) {
             if (side == "right")
-                mirror([1, 0, 0]) rotate([0, 180, 0]) flange2();
+                mirror([1, 0, 0]) eeepc_hinge_lid_half();
             else
-                rotate([0, 180, 0]) flange2();
+                eeepc_hinge_lid_half();
         }
     }
 }
@@ -215,10 +219,10 @@ module eeepc_hinge_piputer(open_angle=0, side="left", x_pos=60,
 // Base-side hinge for the Piputer assembly (fixed to bottom shell).
 // Lid-side half (flange2) belongs in display_asm.scad — it moves with the lid.
 //
-// bar_y, bar_z = barrel world position (Y=130, Z=35).
+// bar_y, bar_z = barrel world position (Y=130, Z=38).
 // Mount plate auto-positioned at bar_y − barrel_y_off, bar_z − barrel_z_off.
 module eeepc_hinge_split(side="left", x_pos=60,
-                          bar_y=130, bar_z=35) {
+                          bar_y=130, bar_z=38) {
     mount_y = bar_y - barrel_y_off;
     mount_z = bar_z - barrel_z_off;
 

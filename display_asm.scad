@@ -23,12 +23,16 @@ module display_asm(
     translate([23, 10, 5])      lcd();
 
     // Hinge lid halves — barrel at back face (Z=0)
+    // rotate([180,0,0]) flips arm from +Z into −Z so it extends behind
+    // the lid (through top_cover zone), matching closed-position orientation.
     color([0.15, 0.15, 0.15]) {
         translate([barrel_left_x, barrel_y, 0])
-            eeepc_hinge_lid_half();
+            rotate([180, 0, 0])
+                eeepc_hinge_lid_half();
         translate([barrel_right_x, barrel_y, 0])
             mirror([1, 0, 0])
-                eeepc_hinge_lid_half();
+                rotate([180, 0, 0])
+                    eeepc_hinge_lid_half();
     }
 }
 
