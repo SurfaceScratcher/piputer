@@ -13,7 +13,7 @@
 // NOTE: in bottom.scad this board is placed rotated 90° (93 mm → X, 60 mm → Y).
 //       Mount-hole centres in that orientation: distX=87, distY=54.
 
-eps = 0.01;
+include <./params.scad>
 
 // ─── PCB ──────────────────────────────────────────────────────────────────
 

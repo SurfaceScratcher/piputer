@@ -7,34 +7,30 @@
 //
 // Hinge barrel: Y=130, Z=38 (3mm above rear zone top)
 //
-// RPi/NVMe standoffs: OD=8mm, H=7mm, blind M2.5 heat-insert hole Ø3.5mm × 5mm from top
+// RPi/NVMe standoffs: OD=8mm, H=7mm, blind M2.5 heat-insert hole 3.5mm x 5mm from top
 
+include <./params.scad>
 use <./piMount.scad>;
 use <./usvMount.scad>;
-use <./kbMount.scad>;
 
-
-eps = 0.01;
 
 module bottom(
-    W=226, D=200, H_front=20, H_rear=35, wall=2, floor_t=3,
-    D_front=130,   // depth of keyboard zone
+    W=W, D=D, H_front=H_front, H_rear=H_rear, wall=wall, floor_t=floor_t,
+    D_front=D_front,
 
-    // RPi5 / NVMe: board left/front corner in outer coords (rear zone inner front face = D_front+wall)
-    rpi_ox=139, rpi_oy=132,
+    // RPi5 / NVMe: board left/front corner in outer coords
+    rpi_ox=rpi_ox, rpi_oy=rpi_oy,
 
-    // Waveshare UPS 3S: rotated 90° → 93mm X, 60mm Y (rear zone)
-    usv_ox=6,   usv_oy=132,
-
-    // MC-8017 keyboard: 220×118mm (front zone)
-    kb_ox=3,    kb_oy=2
+    // Waveshare UPS 3S: rotated 90 deg -> 93mm X, 60mm Y (rear zone)
+    usv_ox=usv_ox, usv_oy=usv_oy
 ) {
     D_rear      = D - D_front;   // = 70
-    standoffH   = 7;
-    standoffD   = 8;
-    insertD     = 3.5;   // M2.5
-    insertDepth = 5;
-    
+    insertD     = ins_d_m25;
+    insertDepth = ins_depth_m25;
+
+    // RPi5 port offsets relative to rpi_oy
+    eth_y_off = -11;    // Ethernet starts 11mm before board front edge
+    usb_y_off = 5;      // USB starts 5mm after board front edge
 
     difference() {
         union() {
@@ -43,7 +39,7 @@ module bottom(
             // Rear block (electronics zone)
             translate([0, D_front, 0])
                 cube([W, D_rear, H_rear]);
-}
+        }
 
         // ── Hollow interior ──────────────────────────────────────────────────
 
@@ -56,11 +52,11 @@ module bottom(
             cube([W - 2*wall, D_rear - wall, H_rear - floor_t]);
 
         // ── Right-wall RPi5 port cutouts ─────────────────────────────────────
-        // Ethernet RJ45: Y 121..138, Z 18..34 → 17mm × 16mm
-        translate([W - wall - eps, 121, 18])
+        // Ethernet RJ45: 17mm x 16mm
+        translate([W - wall - eps, rpi_oy + eth_y_off, 18])
             cube([wall + 2*eps, 17, 16]);
-        // USB-A × 2 merged slot: Y 137..169, Z 18..33 → 32mm × 15mm
-        translate([W - wall - eps, 137, 18])
+        // USB-A x 2 merged slot: 32mm x 15mm
+        translate([W - wall - eps, rpi_oy + usb_y_off, 18])
             cube([wall + 2*eps, 32, 15]);
 
         // NVMe Base PCB overhang clearance (2.5mm past right inner wall, Z=10..11.6)
@@ -69,52 +65,50 @@ module bottom(
 
         // ── Hinge bow clearance notches in step wall ────────────────────────
         // The bow arc outer edge intrudes ~1mm into the step wall inner face.
-        // Cut a small relief at each hinge position.
-        translate([59, D_front - wall - 1, 15])
+        translate([hinge_left_x - 1, D_front - wall - 1, 15])
             cube([10, wall + 1 + eps, 6]);
-        translate([157, D_front - wall - 1, 15])
+        translate([hinge_right_x - width - 2, D_front - wall - 1, 15])
             cube([10, wall + 1 + eps, 6]);
+
+        // ── Rear wall ventilation slots ──────────────────────────────────────
+        // 3 horizontal slots for RPi5 passive cooling
+        for (i = [0 : 2])
+            translate([W/2 - 20, D - wall - eps, H_front + 5 + i * 5])
+                cube([40, wall + 2*eps, 2]);
     }
 
     // ── PCB standoffs ──────────────────────────────────────────────────────────
 
-    // RPi5 / NVMe Base: HAT holes at [3.5, 3.5] from board left/front edge, spacing 58×49mm
+    // RPi5 / NVMe Base: HAT holes at [3.5, 3.5] from board left/front edge
     translate([rpi_ox + 3.5, rpi_oy + 3.5, floor_t])
-        pi_mounts(z0=0, insertD=3.5, insertDepth=5);
+        pi_mounts(z0=0, insertD=ins_d_m25, insertDepth=ins_depth_m25);
 
-    // Waveshare UPS 3S: corner holes 3mm from board edge, spacing 87×54mm
+    // Waveshare UPS 3S: corner holes 3mm from board edge
     translate([usv_ox + 3, usv_oy + 3, floor_t])
-        usv_mounts(z0=0, insertD=3.5, insertDepth=5);
-
-
+        usv_mounts(z0=0, insertD=ins_d_m25, insertDepth=ins_depth_m25);
 
     // ── Hinge support bars ──────────────────────────────────────────────────
     // Solid pillars from floor to H_front under each hinge mount plate.
-    // Blind M2.5 heat-insert holes (Ø3.5 × 5 mm) match loecher_reihe() in
-    // hinge_eeepc.scad (loch_rand=3, loch_abstand=4, anzahl_unten=5).
-    //
-    // Barrel offsets (hinge_rise=7, winkel=70, breite=7.4):
-    //   barrel_y_off ≈ 6.49 → mount_y = D_front − 6.49 ≈ 123.51
-    //   Mount plate Y span: 93.91 .. 123.51 (laenge_a=29.6)
-    hinge_w       = 7.4;    // breite
-    hinge_plate_l = 29.6;   // laenge_a
-    hinge_mount_y = D_front - 6.49;               // mount plate Y origin
-    hinge_bar_y   = hinge_mount_y - hinge_plate_l; // ≈ 93.91
-    hinge_bar_h   = H_front - floor_t;             // 17 mm
+    // Blind M2.5 heat-insert holes match hole_row() in hinge_eeepc.scad.
+    hinge_w       = width;
+    hinge_plate_l = plate_len;
+    hinge_mount_y = D_front - barrel_y_off;
+    hinge_bar_y   = hinge_mount_y - hinge_plate_l;
+    hinge_bar_h   = H_front - floor_t;
 
-    hinge_holes   = 5;
-    hinge_lr      = 3;      // loch_rand
-    hinge_pitch   = 4;      // loch_abstand
+    hinge_holes   = holes_base;
+    hinge_lr      = hole_margin;
+    hinge_pitch   = hole_pitch;
 
-    for (hx = [60, 166 - hinge_w]) {
+    for (hx = [hinge_left_x, hinge_right_x - hinge_w]) {
         difference() {
             translate([hx, hinge_bar_y, floor_t])
                 cube([hinge_w, hinge_plate_l, hinge_bar_h]);
             for (i = [0 : hinge_holes - 1])
                 translate([hx + hinge_w/2,
                            hinge_bar_y + hinge_lr + i * hinge_pitch,
-                           H_front - insertDepth])
-                    cylinder(h = insertDepth + eps, d = insertD, $fn=16);
+                           H_front - ins_depth_m25])
+                    cylinder(h = ins_depth_m25 + eps, d = insertD, $fn=16);
         }
     }
 

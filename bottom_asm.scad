@@ -3,6 +3,7 @@
 // Includes: bottom shell, keyboard cover, PCBs (NVMe, RPi 5, UPS), hinge pair.
 // Standalone preview renders the closed bottom unit (open_angle=0).
 
+include <./params.scad>
 use <./bottom.scad>;
 use <./kb_cover.scad>;
 use <./nvme.scad>;
@@ -12,12 +13,12 @@ use <./hinge_eeepc.scad>;
 
 module bottom_asm(
     open_angle = 120,
-    H_front    = 20,
-    H_rear     = 35,
-    D_front    = 130,
-    barrel_z   = 30,      // hinge barrel Z (H_front + kb_t + hinge_rise = 20+3+7)
-    pcb_z_nvme = 10,      // NVMe Base Z : floor_t(3) + standoffH(7)
-    pcb_z_rpi  = 18.6     // RPi 5 Z     : pcb_z_nvme(10) + nvme_pcb(1.6) + M2.5_spacer(7)
+    H_front    = H_front,
+    H_rear     = H_rear,
+    D_front    = D_front,
+    barrel_z   = barrel_z,
+    pcb_z_nvme = pcb_z_nvme,
+    pcb_z_rpi  = pcb_z_rpi
 ) {
     // ── Shell ────────────────────────────────────────────────────────────────
     bottom();
@@ -27,26 +28,24 @@ module bottom_asm(
         kb_cover();
 
     // ── Pimoroni NVMe Base ───────────────────────────────────────────────────
-    translate([139, 132, pcb_z_nvme])
+    translate([rpi_ox, rpi_oy, pcb_z_nvme])
         nvme_base();
 
     // ── Raspberry Pi 5 ──────────────────────────────────────────────────────
-    translate([139, 132, pcb_z_rpi])
+    translate([rpi_ox, rpi_oy, pcb_z_rpi])
         raspberry_pi_5();
 
     // ── Waveshare UPS 3S ─────────────────────────────────────────────────────
-    // Rotated 90°: 93mm along X, 60mm along Y. Outer extent X=6..99, Y=132..192.
-    translate([99, 132, pcb_z_nvme])
+    // Rotated 90 deg: 93mm along X, 60mm along Y
+    translate([usv_ox + 93, usv_oy, pcb_z_nvme])
     rotate([0, 0, 90])
         usv(batteries=true);
 
     // ── EeePC friction hinge pair (base halves only) ────────────────────────
     // Lid halves are in display_asm.scad — they rotate with the lid.
-    // bar_y/bar_z = barrel world position; mount plate auto-positioned at
-    // Z = bar_z − barrel_z_off (rests on keyboard cover).
-    eeepc_hinge_split(side="left",  x_pos=60,
+    eeepc_hinge_split(side="left",  x_pos=hinge_left_x,
                       bar_y=D_front, bar_z=barrel_z);
-    eeepc_hinge_split(side="right", x_pos=166,
+    eeepc_hinge_split(side="right", x_pos=hinge_right_x,
                       bar_y=D_front, bar_z=barrel_z);
 }
 
