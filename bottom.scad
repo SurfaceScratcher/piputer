@@ -93,13 +93,13 @@ module bottom(
     // Blind M2.5 heat-insert holes (Ø3.5 × 5 mm) match loecher_reihe() in
     // hinge_eeepc.scad (loch_rand=3, loch_abstand=4, anzahl_unten=5).
     //
-    // Barrel offsets (hinge_rise=15, winkel=70, breite=7.4):
-    //   barrel_y_off ≈ 9.40 → mount_y = D_front − 9.40 ≈ 120.60
-    //   Mount plate Y span: 91.00 .. 120.60 (laenge_a=29.6)
+    // Barrel offsets (hinge_rise=7, winkel=70, breite=7.4):
+    //   barrel_y_off ≈ 6.49 → mount_y = D_front − 6.49 ≈ 123.51
+    //   Mount plate Y span: 93.91 .. 123.51 (laenge_a=29.6)
     hinge_w       = 7.4;    // breite
     hinge_plate_l = 29.6;   // laenge_a
-    hinge_mount_y = D_front - 9.40;               // mount plate Y origin
-    hinge_bar_y   = hinge_mount_y - hinge_plate_l; // ≈ 92.09
+    hinge_mount_y = D_front - 6.49;               // mount plate Y origin
+    hinge_bar_y   = hinge_mount_y - hinge_plate_l; // ≈ 93.91
     hinge_bar_h   = H_front - floor_t;             // 17 mm
 
     hinge_holes   = 5;

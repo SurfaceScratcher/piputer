@@ -31,10 +31,10 @@ winkel            = 70;
 $fn               = 40;
 
 // Height the barrel must sit above the mount plate.
-// = barrel_z(38) − (H_front(20) + kb_cover_t(3)) = 15
+// = barrel_z(30) − (H_front(20) + kb_cover_t(3)) = 7
 // Mount plate rests on top of the keyboard cover at Z = H_front + 3 = 23.
-// Barrel sits at Z = 23 + 15 = 38 (3 mm above H_rear → hinge gap).
-hinge_rise        = 15;
+// Barrel sits at Z = 23 + 7 = 30 (5 mm below H_rear, inside rear zone).
+hinge_rise        = 7;
 
 // -- Löcher --
 loch_d            = 2.5;   // Lochdurchmesser
@@ -70,7 +70,7 @@ offset_z = laenge_b * (1 + sin(winkel)) - breite/2 * cos(winkel);
 // through rotate([0,0,winkel]) then rotate([0,90,0]) in flange().
 barrel_y_off = sin(winkel) * breite/2 + cos(winkel) * laenge_b;
 barrel_z_off = sin(winkel) * laenge_b - cos(winkel) * breite/2;
-// With hinge_rise=15: barrel_z_off = 15, barrel_y_off ≈ 9.4
+// With hinge_rise=7: barrel_z_off = 7, barrel_y_off ≈ 6.49
 
 // Gesamtlänge die die Lochreihe belegt – zur Validierung
 belegte_laenge_unten = 2 * loch_rand + (anzahl_unten - 1) * loch_abstand;
@@ -188,9 +188,9 @@ module eeepc_hinge_asm() {
 // side       : "left" or "right"
 // x_pos      : X coordinate of hinge in world coords
 // bar_y      : barrel axis Y (world) — D_front = 130
-// bar_z      : barrel axis Z (world) — barrel_z = 38
+// bar_z      : barrel axis Z (world) — barrel_z = 30
 module eeepc_hinge_piputer(open_angle=0, side="left", x_pos=60,
-                            bar_y=130, bar_z=38) {
+                            bar_y=130, bar_z=30) {
     mount_y = bar_y - barrel_y_off;
     mount_z = bar_z - barrel_z_off;
 
@@ -219,10 +219,10 @@ module eeepc_hinge_piputer(open_angle=0, side="left", x_pos=60,
 // Base-side hinge for the Piputer assembly (fixed to bottom shell).
 // Lid-side half (flange2) belongs in display_asm.scad — it moves with the lid.
 //
-// bar_y, bar_z = barrel world position (Y=130, Z=38).
+// bar_y, bar_z = barrel world position (Y=130, Z=30).
 // Mount plate auto-positioned at bar_y − barrel_y_off, bar_z − barrel_z_off.
 module eeepc_hinge_split(side="left", x_pos=60,
-                          bar_y=130, bar_z=38) {
+                          bar_y=130, bar_z=30) {
     mount_y = bar_y - barrel_y_off;
     mount_z = bar_z - barrel_z_off;
 

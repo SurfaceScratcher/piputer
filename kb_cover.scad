@@ -23,8 +23,8 @@ module kb_cover(
 
     // Hinge screw positions (must match hinge_eeepc.scad & bottom.scad)
     hinge_w     = 7.4;    // breite
-    hinge_mount_y = D - 9.40;                     // ≈ 120.60 (barrel_y_off with hinge_rise=15)
-    hinge_bar_y   = hinge_mount_y - 29.6;         // ≈ 91.00
+    hinge_mount_y = D - 6.49;                     // ≈ 123.51 (barrel_y_off with hinge_rise=7)
+    hinge_bar_y   = hinge_mount_y - 29.6;         // ≈ 93.91
     hinge_lr      = 3;
     hinge_pitch   = 4;
     hinge_holes   = 5;

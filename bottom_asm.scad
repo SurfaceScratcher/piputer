@@ -15,7 +15,7 @@ module bottom_asm(
     H_front    = 20,
     H_rear     = 35,
     D_front    = 130,
-    barrel_z   = 38,      // hinge barrel Z (H_front + kb_t + H_lid = 20+3+15)
+    barrel_z   = 30,      // hinge barrel Z (H_front + kb_t + hinge_rise = 20+3+7)
     pcb_z_nvme = 10,      // NVMe Base Z : floor_t(3) + standoffH(7)
     pcb_z_rpi  = 18.6     // RPi 5 Z     : pcb_z_nvme(10) + nvme_pcb(1.6) + M2.5_spacer(7)
 ) {
