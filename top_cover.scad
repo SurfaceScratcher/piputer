@@ -28,9 +28,9 @@ module top_cover(
     ins_d=ins_d_m3, ins_depth=ins_depth_m3
 ) {
     barrel_clr_d = width + 1.6;    // barrel clearance: dia 9 > width 7.4
-
     difference() {
-        cube([W, D, back_t]);
+
+        cube([W,D, back_t]);
 
         // 4 x M2.5 clearance holes (dia 2.7 mm) — back plate -> frame corner bosses
         for (pos = [[6,6],[220,6],[6,124],[220,124]])

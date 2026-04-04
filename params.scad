@@ -8,9 +8,10 @@
 
 // ── Enclosure envelope ───────────────────────────────────────────────────────
 W        = 226;     // enclosure width (X)
-D        = 200;     // enclosure total depth (Y)
+D        = 220;     // enclosure total depth (Y)
 D_front  = 130;     // keyboard zone depth
-D_rear   = D - D_front;  // = 70, electronics zone depth
+D_clearance=20;      // space between electronicszone and lid
+D_rear   = D - D_front-D_clearance;  // = 70, electronics zone depth
 H_front  = 20;      // front zone height (Z)
 H_rear   = 35;      // rear zone height (Z)
 wall     = 2;       // shell wall thickness
@@ -49,8 +50,8 @@ barrel_z_off = sin(bend_angle) * arm_len - cos(bend_angle) * width/2;
 bz_local = 8;
 
 // Hinge X positions (world coords, left inner edge)
-hinge_left_x  = 60;
-hinge_right_x = 166;
+hinge_left_x  = W-10;
+hinge_right_x = 10;
 
 // ── Hinge pin geometry ───────────────────────────────────────────────────────
 pin_d_large  = width;
@@ -65,9 +66,9 @@ hole_pitch     = 4;       // hole spacing
 holes_base     = 5;       // holes in base mount plate
 holes_lid      = 4;       // holes in lid mount plate
 
-// ── PCB placement (outer coords) ────────────────────────────────────────────
-rpi_ox  = 139;    rpi_oy = 132;    // RPi5 / NVMe Base: board left/front corner
-usv_ox  = 6;      usv_oy = 132;    // Waveshare UPS 3S
+// ── PCB placement (outer coords) ───────────────────────────────────────────
+rpi_ox  = 139;    rpi_oy = 152;    // RPi5 / NVMe Base: board left/front corner
+usv_ox  = 6;      usv_oy = 152;    // Waveshare UPS 3S
 kb_ox   = 3;      kb_oy  = 2;      // MC-8017 keyboard
 
 // PCB Z positions

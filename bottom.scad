@@ -29,8 +29,8 @@ module bottom(
     insertDepth = ins_depth_m25;
 
     // RPi5 port offsets relative to rpi_oy
-    eth_y_off = -11;    // Ethernet starts 11mm before board front edge
-    usb_y_off = 5;      // USB starts 5mm after board front edge
+    eth_y_off = -11+10;    // Ethernet starts 11mm before board front edge
+    usb_y_off = 5+10;      // USB starts 5mm after board front edge
 
     difference() {
         union() {
@@ -60,8 +60,8 @@ module bottom(
             cube([wall + 2*eps, 32, 15]);
 
         // NVMe Base PCB overhang clearance (2.5mm past right inner wall, Z=10..11.6)
-        translate([W - wall - eps, rpi_oy, 10 - eps])
-            cube([wall + 2*eps, 56, 1.6 + 2*eps]);
+       // translate([W - wall - eps, rpi_oy, 10 - eps])
+         //   cube([wall + 2*eps, 56, 1.6 + 2*eps]);
 
         // ── Hinge bow clearance notches in step wall ────────────────────────
         // The bow arc outer edge intrudes ~1mm into the step wall inner face.
