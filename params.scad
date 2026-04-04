@@ -10,8 +10,8 @@
 W        = 226;     // enclosure width (X)
 D        = 220;     // enclosure total depth (Y)
 D_front  = 130;     // keyboard zone depth
-D_clearance=20;      // space between electronicszone and lid
-D_rear   = D - D_front-D_clearance;  // = 70, electronics zone depth
+D_clearance=15;      // space between electronicszone and lid
+D_rear   = D - D_front;  // = 70, electronics zone depth
 H_front  = 20;      // front zone height (Z)
 H_rear   = 35;      // rear zone height (Z)
 wall     = 2;       // shell wall thickness
@@ -92,4 +92,4 @@ usv_hole_dx = 87;    usv_hole_dy = 54;    // Waveshare UPS 3S
 kb_hole_dx  = 212;   kb_hole_dy  = 110;   // MC-8017 keyboard
 
 // ── Manifold fix ─────────────────────────────────────────────────────────────
-eps = 0.01;
+eps = 0.04;

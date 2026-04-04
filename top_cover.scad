@@ -23,14 +23,30 @@
 
 include <./params.scad>
 
+module front_plate(W=W, D=D_front, back_t=back_t,
+    ins_d=ins_d_m3, ins_depth=ins_depth_m3){
+    cube([W,D, back_t]);
+    
+    translate([W/2,D,14])
+    rotate([0,90,0]){
+    difference(){
+    cylinder(h=W-20,r=14,center=true);
+    cylinder(h=W-18,r=9,center=true);
+    translate([-21,-18,-120])
+    cube([30,20,230]);
+    }
+    
+    }
+}
+
 module top_cover(
-    W=W, D=D_front, back_t=back_t,
+    W=W, D=D_front+D_clearance, back_t=back_t,
     ins_d=ins_d_m3, ins_depth=ins_depth_m3
 ) {
     barrel_clr_d = width + 1.6;    // barrel clearance: dia 9 > width 7.4
     difference() {
 
-        cube([W,D, back_t]);
+        front_plate();
 
         // 4 x M2.5 clearance holes (dia 2.7 mm) — back plate -> frame corner bosses
         for (pos = [[6,6],[220,6],[6,124],[220,124]])
@@ -48,10 +64,10 @@ module top_cover(
 
         // ── Barrel clearance notches at back edge ───────────────────────
         // Semicircular notches at Y=D_front for each hinge barrel.
-        translate([hinge_left_x, D, -eps])
-            cylinder(h = back_t + 2*eps, d = barrel_clr_d, $fn=24);
-        translate([hinge_right_x, D, -eps])
-            cylinder(h = back_t + 2*eps, d = barrel_clr_d, $fn=24);
+     //   translate([hinge_left_x, D, -eps])
+       //     cylinder(h = back_t + 2*eps, d = barrel_clr_d, $fn=24);
+       // translate([hinge_right_x, D, -eps])
+       //     cylinder(h = back_t + 2*eps, d = barrel_clr_d, $fn=24);
     }
 }
 

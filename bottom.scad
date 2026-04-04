@@ -16,7 +16,7 @@ use <./usvMount.scad>;
 
 module bottom(
     W=W, D=D, H_front=H_front, H_rear=H_rear, wall=wall, floor_t=floor_t,
-    D_front=D_front,
+    D_front=D_front,D_rear=D_rear,
 
     // RPi5 / NVMe: board left/front corner in outer coords
     rpi_ox=rpi_ox, rpi_oy=rpi_oy,
@@ -24,7 +24,7 @@ module bottom(
     // Waveshare UPS 3S: rotated 90 deg -> 93mm X, 60mm Y (rear zone)
     usv_ox=usv_ox, usv_oy=usv_oy
 ) {
-    D_rear      = D - D_front;   // = 70
+   // D_rear      = D - D_front;   // = 70
     insertD     = ins_d_m25;
     insertDepth = ins_depth_m25;
 
@@ -35,21 +35,21 @@ module bottom(
     difference() {
         union() {
             // Front block (keyboard zone)
-            cube([W, D_front, H_front]);
+            cube([W, D_front+D_clearance, H_front]);
             // Rear block (electronics zone)
-            translate([0, D_front, 0])
-                cube([W, D_rear, H_rear]);
+            translate([0, D_front+D_clearance, 0])
+                cube([W, D_rear-D_clearance, H_rear]);
         }
 
         // ── Hollow interior ──────────────────────────────────────────────────
 
         // Front zone interior (open top at Z=H_front, no wall at Y=D_front)
         translate([wall, wall, floor_t])
-            cube([W - 2*wall, D_front - wall, H_front - floor_t]);
+            cube([W - 2*wall, D_front - wall+5, H_front - floor_t+0.5]);
 
         // Rear zone interior (open top at Z=H_rear, no front wall needed)
-        translate([wall, D_front, floor_t])
-            cube([W - 2*wall, D_rear - wall, H_rear - floor_t]);
+        translate([wall, D_front-6, floor_t])
+            cube([W - 2*wall, D_rear - wall+5, H_rear - floor_t+0.5]);
 
         // ── Right-wall RPi5 port cutouts ─────────────────────────────────────
         // Ethernet RJ45: 17mm x 16mm
@@ -60,8 +60,8 @@ module bottom(
             cube([wall + 2*eps, 32, 15]);
 
         // NVMe Base PCB overhang clearance (2.5mm past right inner wall, Z=10..11.6)
-       // translate([W - wall - eps, rpi_oy, 10 - eps])
-         //   cube([wall + 2*eps, 56, 1.6 + 2*eps]);
+        translate([W - wall - eps, rpi_oy, 10 - eps])
+           cube([wall + 2*eps, 56, 1.6 + 2*eps]);
 
         // ── Hinge bow clearance notches in step wall ────────────────────────
         // The bow arc outer edge intrudes ~1mm into the step wall inner face.

@@ -25,7 +25,7 @@ module display_asm(
     open_angle     = 0       // 0 = closed/print, 120 = typical open
 ) {
     top();
-    translate([0, 0, -back_t]) top_cover();
+   translate([0, 0, -back_t]) top_cover();
     translate([23, 10, 5])      lcd();
 
     // Hinge lid halves — barrel at (X, barrel_y, bz_local)

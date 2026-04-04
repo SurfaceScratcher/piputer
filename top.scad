@@ -21,7 +21,7 @@
 include <./params.scad>
 
 module top(
-    W=W, D=140, H=lid_H, wall=wall,
+    W=W, D=130, H=lid_H, wall=wall,
     back_t  = back_t,
     bezel_t = bezel_t,
 
@@ -64,10 +64,10 @@ module top(
         // ── Hinge-zone wall relief ──────────────────────────────────────
         // Remove rear 12 mm of left/right side walls (Z=0..int_z1) so
         // the lid nests inside the bottom shell at Y=130..140.
-        translate([-eps, D - wall - 10, -eps])
-            cube([wall + 2*eps, 10 + wall + eps, int_z1 + eps]);
-        translate([W - wall - eps, D - wall - 10, -eps])
-            cube([wall + 2*eps, 10 + wall + eps, int_z1 + eps]);
+        translate([-eps , D - wall - 10, -eps])
+            cube([wall + 30 + 2*eps, 10 + wall + eps, int_z1 + eps]);
+        translate([W - wall - 30 - eps, D - wall - 10, -eps])
+            cube([wall + 30 + 2*eps, 10 + wall + eps, int_z1 + eps]);
 
     }
 
